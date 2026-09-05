@@ -23,7 +23,7 @@ from pathlib import Path
 
 from flask import (
     Flask, Response, flash, get_flashed_messages,
-    redirect, render_template, request, url_for,
+    redirect, render_template, request, session, url_for,
 )
 
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
@@ -93,25 +93,16 @@ def get_tunnel(name: str) -> dict | None:
     return None
 
 
-# ---------- auth ----------
+# ---------- auth (HTML form + session; works in iframes/embedded previews) ----------
 
 def auth_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if not GUI_PASS:  # empty pass = auth disabled (isolated net only)
             return f(*args, **kwargs)
-        auth = request.authorization
-        ok = (
-            auth is not None
-            and hmac.compare_digest(auth.username or "", GUI_USER)
-            and hmac.compare_digest(auth.password or "", GUI_PASS)
-        )
-        if not ok:
-            return Response(
-                "Login required", 401,
-                {"WWW-Authenticate": 'Basic realm="tunnel-manager"'},
-            )
-        return f(*args, **kwargs)
+        if session.get("authed"):
+            return f(*args, **kwargs)
+        return redirect(url_for("route_login", next=request.path))
     return wrapper
 
 
@@ -279,6 +270,27 @@ def verify_remote(t: dict) -> tuple[bool, str]:
 @app.get("/healthz")
 def healthz():
     return {"ok": True}
+
+
+@app.route("/login", methods=["GET", "POST"])
+def route_login():
+    if not GUI_PASS:
+        return redirect(url_for("index"))
+    err = None
+    if request.method == "POST":
+        user = request.form.get("username", "")
+        pw = request.form.get("password", "")
+        if hmac.compare_digest(user, GUI_USER) and hmac.compare_digest(pw, GUI_PASS):
+            session["authed"] = True
+            return redirect(request.args.get("next") or url_for("index"))
+        err = "Invalid username or password"
+    return render_template("login.html", err=err)
+
+
+@app.get("/logout")
+def route_logout():
+    session.clear()
+    return redirect(url_for("route_login"))
 
 
 @app.get("/")

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Login</h2>
+{% if err %}<div class="flash err">{{ err }}</div>{% endif %}
+<form method="post" class="form" style="max-width:320px">
+  <label>Username <input name="username" autocomplete="username" required></label>
+  <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+  <button type="submit">Log in</button>
+</form>
+{% endblock %}
