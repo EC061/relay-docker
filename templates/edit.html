@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ 'New tunnel' if is_new else 'Edit ' + t.name }}</h2>
+<form method="post" action="{{ url_for('route_save') }}" class="form">
+  <input type="hidden" name="old_name" value="{{ '' if is_new else t.name }}">
+  <label>Name <input name="name" value="{{ t.name }}" required pattern="[A-Za-z0-9_-]+"></label>
+  <label><input type="checkbox" name="enabled" {{ 'checked' if t.enabled else '' }}> Start on boot</label>
+  <div class="grid">
+    <label>Jump user <input name="jump_user" value="{{ t.jump_user }}" required></label>
+    <label>Jump host <input name="jump_host" value="{{ t.jump_host }}" required></label>
+    <label>Jump port <input name="jump_port" type="number" value="{{ t.jump_port }}"></label>
+    <label>Default bind <input name="bind_address" value="{{ t.bind_address }}"></label>
+  </div>
+  <label>Key file
+    <div class="grid">
+      <select name="key_select">
+        <option value="">-- existing key --</option>
+        {% for k in keys %}<option {{ 'selected' if ('/data/keys/'+k)==t.key_file else '' }} value="{{ k }}">{{ k }}</option>{% endfor %}
+      </select>
+      <input name="key_file" value="{{ t.key_file }}" placeholder="/data/keys/tunnel_key">
+    </div>
+    <small>If custom path typed, it takes precedence. Paste key contents under Keys page.</small>
+  </label>
+  <label>SSH -o options (one per line, without -o)
+    <textarea name="ssh_options" rows="4">{{ '\n'.join(t.ssh_options) }}</textarea>
+  </label>
+  <h3>Forwards (-R bind:remote:target:port)</h3>
+  <table id="fw-table">
+    <tr><th>Remote port</th><th>Target host</th><th>Target port</th><th>Bind override</th><th></th></tr>
+    {% for fw in t.forwards %}
+    <tr>
+      <td><input name="fw_remote" value="{{ fw.remote_port }}" size="6" required></td>
+      <td><input name="fw_target_host" value="{{ fw.target_host }}" required></td>
+      <td><input name="fw_target_port" value="{{ fw.target_port }}" size="6" required></td>
+      <td><input name="fw_bind" value="{{ fw.bind or '' }}" placeholder="default"></td>
+      <td><button type="button" onclick="this.closest('tr').remove()">✕</button></td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td><input name="fw_remote" size="6" placeholder="2211"></td>
+      <td><input name="fw_target_host" placeholder="internal.example.com"></td>
+      <td><input name="fw_target_port" size="6" placeholder="22"></td>
+      <td><input name="fw_bind" placeholder="default"></td>
+      <td><button type="button" onclick="this.closest('tr').remove()">✕</button></td>
+    </tr>
+  </table>
+  <button type="button" onclick="addRow()">+ Add forward</button>
+  <div class="actions">
+    <button type="submit">Save (restarts if running)</button>
+    <a class="btn" href="{{ url_for('index') }}">Cancel</a>
+    {% if not is_new %}
+  </div>
+</form>
+<form method="post" action="{{ url_for('route_delete', name=t.name) }}" onsubmit="return confirm('Delete {{ t.name }}?')">
+  <button class="danger">Delete tunnel</button>
+</form>
+    {% else %}
+  </div>
+</form>
+    {% endif %}
+<script>
+function addRow(){
+  const tbl = document.getElementById('fw-table');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input name="fw_remote" size="6"></td>
+    <td><input name="fw_target_host"></td>
+    <td><input name="fw_target_port" size="6"></td>
+    <td><input name="fw_bind" placeholder="default"></td>
+    <td><button type="button" onclick="this.closest('tr').remove()">✕</button></td>`;
+  tbl.appendChild(tr);
+}
+</script>
+{% endblock %}

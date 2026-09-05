@@ -1,0 +1,15 @@
+services:
+  relay:
+    # Prebuilt image from GitHub Action (GHCR). No local build needed.
+    image: ghcr.io/EC061/relay-docker:latest
+    container_name: tunnel-relay
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      - GUI_USER=${GUI_USER:-admin}
+      - GUI_PASS=${GUI_PASS:?set GUI_PASS in .env}
+      - PORT=8080
+      - DATA_DIR=/data
+    volumes:
+      - ./data:/data

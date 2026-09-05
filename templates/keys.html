@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>SSH keys</h2>
+<p>Keys are stored in <code>/data/keys/</code> with mode 600. Paste the <b>private</b> key content here (not the .pub). Everything is entered via this page — nothing is baked into the image.</p>
+<ul>
+{% for k in items %}<li><code>{{ k.path }}</code> ({{ k.size }} bytes, {{ k.mode }})</li>{% endfor %}
+</ul>
+<form method="post" action="{{ url_for('route_keys_save') }}" class="form">
+  <label>Filename (no path) <input name="filename" value="tunnel_key" required></label>
+  <label>Private key content <textarea name="content" rows="12" required placeholder="-----BEGIN OPENSSH PRIVATE KEY-----"></textarea></label>
+  <button type="submit">Save key</button>
+</form>
+{% endblock %}

@@ -1,0 +1,15 @@
+services:
+  relay:
+    build: .
+    image: relay-docker:local
+    container_name: tunnel-relay
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      - GUI_USER=${GUI_USER:-admin}
+      - GUI_PASS=${GUI_PASS:?set GUI_PASS in .env}
+      - PORT=8080
+      - DATA_DIR=/data
+    volumes:
+      - ./data:/data

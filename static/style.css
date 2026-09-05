@@ -1,0 +1,23 @@
+body{font-family:system-ui,sans-serif;margin:0;background:#111418;color:#e8e8e8}
+header{background:#1d2530;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:18px;margin:0}
+nav a{color:#9fc5ff;margin-right:12px;text-decoration:none}
+main{padding:20px;max-width:1000px;margin:auto}
+.card{background:#1a2029;border:1px solid #2c3644;border-radius:8px;padding:16px;margin-bottom:16px}
+.card-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+button,.btn{background:#2f6fed;color:#fff;border:0;border-radius:6px;padding:6px 12px;cursor:pointer;text-decoration:none;font-size:14px}
+button.danger{background:#b33636}
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th,td{border-bottom:1px solid #2c3644;padding:6px;text-align:left;font-size:14px}
+code{background:#0d1117;padding:2px 6px;border-radius:4px}
+pre{background:#0d1117;padding:10px;border-radius:6px;overflow:auto;font-size:12px}
+.meta{color:#aaa;font-size:13px}
+.badge{font-size:12px;padding:2px 8px;border-radius:10px}
+.badge.on{background:#1d7a3a}.badge.off{background:#7a1d1d}.badge.muted{background:#555}
+.form label{display:block;margin:10px 0}
+.form input,.form textarea,.form select{background:#0d1117;color:#eee;border:1px solid #333;border-radius:6px;padding:8px;width:100%;box-sizing:border-box}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.flash{padding:10px;border-radius:6px;margin-bottom:10px}
+.flash.ok{background:#123f22}.flash.err{background:#4a1515}
+footer{text-align:center;color:#666;padding:20px}

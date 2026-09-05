@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+{% if auth_disabled %}<div class="flash err">WARNING: GUI auth is disabled (GUI_PASS empty). Only use on isolated networks.</div>{% endif %}
+{% for r in rows %}
+<section class="card">
+  <div class="card-head">
+    <h2>{{ r.cfg.name }}
+      <span class="badge {{ 'on' if r.running else 'off' }}">{{ 'UP' if r.running else 'DOWN' }}</span>
+      {% if not r.cfg.enabled %}<span class="badge muted">disabled on boot</span>{% endif %}
+    </h2>
+    <div class="actions">
+      <form method="post" action="{{ url_for('route_start', name=r.cfg.name) }}"><button>Start</button></form>
+      <form method="post" action="{{ url_for('route_stop', name=r.cfg.name) }}"><button>Stop</button></form>
+      <form method="post" action="{{ url_for('route_restart', name=r.cfg.name) }}"><button>Restart</button></form>
+      <form method="post" action="{{ url_for('route_toggle', name=r.cfg.name) }}"><button>{{ 'Disable' if r.cfg.enabled else 'Enable' }}</button></form>
+      <a class="btn" href="{{ url_for('route_edit', name=r.cfg.name) }}">Edit</a>
+      <a class="btn" href="{{ url_for('route_verify', name=r.cfg.name) }}">Verify remote</a>
+      <a class="btn" href="{{ url_for('route_logs', name=r.cfg.name) }}?n=500" target="_blank">Full log</a>
+    </div>
+  </div>
+  <p class="meta">
+    <code>{{ r.cfg.jump_user }}@{{ r.cfg.jump_host }}:{{ r.cfg.jump_port }}</code> ·
+    key <code>{{ r.cfg.key_file }}</code> ·
+    {% if r.pid %}pid <code>{{ r.pid }}</code> · up {{ (r.uptime // 60)|int }} min{% endif %}
+  </p>
+  <table>
+    <tr><th>Remote port (on jump)</th><th>Target</th></tr>
+    {% for fw in r.cfg.forwards %}
+    <tr><td><code>{{ fw.bind or r.cfg.bind_address }}:{{ fw.remote_port }}</code></td>
+        <td><code>{{ fw.target_host }}:{{ fw.target_port }}</code></td></tr>
+    {% endfor %}
+  </table>
+  <details>
+    <summary>autossh command + recent log</summary>
+    <pre>{{ r.cmd }}</pre>
+    <pre>{{ r.log }}</pre>
+  </details>
+</section>
+{% else %}
+<p>No tunnels configured. <a href="{{ url_for('route_new') }}">Create one</a>.</p>
+{% endfor %}
+{% endblock %}

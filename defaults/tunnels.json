@@ -1,0 +1,22 @@
+{
+  "tunnels": [
+    {
+      "name": "example",
+      "enabled": false,
+      "jump_user": "jump_user",
+      "jump_host": "jump.example.com",
+      "jump_port": 22,
+      "key_file": "/data/keys/tunnel_key",
+      "bind_address": "127.0.0.1",
+      "ssh_options": [
+        "ServerAliveInterval 30",
+        "ServerAliveCountMax 3",
+        "ExitOnForwardFailure=yes",
+        "StrictHostKeyChecking=no"
+      ],
+      "forwards": [
+        {"remote_port": 2211, "target_host": "internal.example.com", "target_port": 22, "bind": null}
+      ]
+    }
+  ]
+}

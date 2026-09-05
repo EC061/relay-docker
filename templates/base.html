@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tunnel Manager</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+  <h1>SSH Tunnel Manager</h1>
+  <nav>
+    <a href="{{ url_for('index') }}">Tunnels</a>
+    <a href="{{ url_for('route_keys') }}">Keys</a>
+    <a href="{{ url_for('route_new') }}" class="btn">+ New tunnel</a>
+  </nav>
+</header>
+<main>
+{% with msgs = get_flashed_messages(with_categories=true) %}
+{% if msgs %}<div class="flashes">{% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}</div>{% endif %}
+{% endwith %}
+{% block content %}{% endblock %}
+</main>
+<footer><small>autossh reverse tunnels · config in /data/tunnels.json · keys in /data/keys (600)</small></footer>
+</body>
+</html>
