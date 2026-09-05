@@ -9,12 +9,13 @@ Everything is filled in from the WebGUI and stored in `./data/`:
 - private keys → `./data/keys/` (chmod 600)
 - logs → `./data/logs/`
 
-## Deploy (2 commands)
+## Deploy
+
+Edit `GUI_PASS` inside `docker-compose.yml`, then:
 
 ```bash
-cp .env.example .env   # edit GUI_PASS
 docker compose up -d
-# open http://host:8080  (login with GUI_USER/GUI_PASS)
+# open http://host:8080  (login with GUI_USER/GUI_PASS from the yml)
 ```
 
 Then in the WebGUI:
